@@ -22,7 +22,20 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="com.matstar.controller" />
+	<context:component-scan base-package="com.matstar.exception"></context:component-scan>
 	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 1024 * 1024 * 10bytes = 10mb -->
+		<!-- defaultencoding 한글파일 깨짐 문제 처리 -->
+		<beans:property name="defaultEncoding" value="utf-8"></beans:property>
+		<!--  maxuploadsize : 한 번의 Request로 전달될 수 있는 최대의 크기 -->
+		<beans:property name="maxUploadSize" value="104857560"></beans:property>
+		<!--  maxuploadsizeperfile : 하나의 파일 최대 크기 -->
+		<beans:property name="maxUploadSizePerFile" value ="2097152"> </beans:property>
+		<beans:property name="uploadTempDir" value ="file:/c:/upload/tmp"></beans:property>
+		<!-- maxinmemorysize 메모리상에서 유지하는 최대의 크기 -->
+		<beans:property name="maxInMemorySize" value="10485756"></beans:property>
+	</beans:bean>
 	
 	
 </beans:beans>
