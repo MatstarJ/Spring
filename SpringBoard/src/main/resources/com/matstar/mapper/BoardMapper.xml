@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matstar.BoardMapper">
+
+<select id="getList" resultType="com.matstar.domain.BoardVO">
+	<![CDATA[
+	SELECT * FROM TBL_BOARD WHERE BNO > 0
+	]]>
+</select>
+
+<insert id="insert">
+	INSERT INTO TBL_BOARD (BNO,TITLE,CONTENT,WRITER)
+	VALUES (SEQ_BOARD.NEXTVAL, #{TITLE}, #{CONTENT}, #{WRITER})
+</insert>
+
+<!-- @selectKey라는 MyBatis의 어노테이션을 이용하여 주로 PK값을 미리 SQL을 통해 처리해 두고 특정한 이름으로 결과를 보관한다.
+(시퀀스로 처리하면 값이 null로 출력되는데 반해 selectKey를 사용하면 제대로 나온다. 자동으로 추가되는 PK값을 확인하는 상황에 유용하게 쓰인다.) -->
+<insert id="insertSelectKey">
+	<selectKey keyProperty="BNO" order="BEFORE" resultType="long">
+		SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+	</selectKey>
+	
+	INSERT INTO TBL_BOARD (BNO, TITLE, CONTENT, WRITER)
+	VALUES (#{BNO}, #{TITLE}, #{CONTENT}, #{WRITER}
+</insert>
+
+<select id="read" resultType="com.matstar.BoardVO">
+	SELECT * FROM TBL_BOARD WHERE BNO = #{BNO}
+</select>
+
+<delete id="delete">
+	DELETE FROM TBL_BOARD WHERE BNO = #{BNO}
+</delete>
+
+<update id="update">
+	UPDATE TBL_BOARD
+	SET TITLE = #{TITLE},
+	CONTENT = #{CONTENT},
+	WRITER = #{WRITER},
+	UPDATEDATE = SYSDATE
+	WHERE BNO = #{BNO}
+</update>
+
+</mapper>
