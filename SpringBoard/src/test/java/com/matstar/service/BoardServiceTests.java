@@ -74,7 +74,7 @@ public class BoardServiceTests {
 		
 		board.setTitle("제목 수정합니다");
 		log.info("Modify Result : " + service.modify(board));
-		
+
 	}
 	
 }
