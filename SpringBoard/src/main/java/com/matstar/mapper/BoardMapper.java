@@ -2,9 +2,9 @@ package com.matstar.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Select;
-
 import com.matstar.domain.BoardVO;
+
+
 
 public interface BoardMapper {
 
