@@ -23,14 +23,20 @@ public class BoardController {
 	private BoardService service;
 	
 	
-	
+	//전체 리스트 출력
 	@GetMapping("/list")
 	public void list(Model model) {
 		log.info("list");
 		model.addAttribute("list",service.getList());
 	}
 	
-
+	//게시물의 등록 작업은 POST방식으로 처리하지만 화면에서 
+	//입력을 받아야 하므로 GET방식으로 입력 페이지를 처리한다.
+	@GetMapping("/register")
+	public void register() {
+		
+	}
+	
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		log.info("register : " + board);
@@ -42,7 +48,7 @@ public class BoardController {
 		return "redirect:/board/list";
 	}
 	
-	@GetMapping("/get")
+	@GetMapping({"/get","/modify"})
 	public void get(@RequestParam("bno") Long bno, Model model) {
 		
 		log.info("/get");
