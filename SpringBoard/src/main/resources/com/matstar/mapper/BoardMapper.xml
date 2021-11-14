@@ -41,4 +41,25 @@
 	WHERE BNO = #{bno}
 </update>
 
+
+<select id="getListWithPaging" resultType="com.matstar.domain.BoardVO">
+	<![CDATA[
+		SELECT BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+		FROM
+			(
+			SELECT /*+INDEX_DESC(TBL_BOARD PK_BOARD) */
+				ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+			FROM
+				TBL_BOARD
+			WHERE
+				ROWNUM <= #{pageNum} * #{amount}	
+			)
+		WHERE RN  > (#{pageNum} -1) * #{amount}
+	]]>
+</select>
+
+<select id="getTotalCount" resultType="int">
+	SELECT COUNT(*) FROM TBL_BOARD WHERE BNO > 0
+</select>
+
 </mapper>

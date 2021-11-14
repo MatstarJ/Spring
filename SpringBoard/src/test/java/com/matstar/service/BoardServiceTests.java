@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.matstar.domain.BoardVO;
+import com.matstar.domain.Criteria;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -46,7 +47,10 @@ public class BoardServiceTests {
 	@Test
 	public void testGetList() {
 		
-		service.getList().forEach(board -> log.info(board));
+		//페이지번호를 받아 오도록 수정
+		//service.getList().forEach(board -> log.info(board));
+		
+		service.getList(new Criteria(2,10)).forEach(board -> log.info(board));
 	}
 	
 	

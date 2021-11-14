@@ -3,12 +3,15 @@ package com.matstar.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.matstar.domain.BoardVO;
+import com.matstar.domain.Criteria;
+import com.matstar.domain.PageDTO;
 import com.matstar.service.BoardService;
 
 import lombok.AllArgsConstructor;
@@ -25,10 +28,26 @@ public class BoardController {
 	
 	//전체 리스트 출력
 	@GetMapping("/list")
-	public void list(Model model) {
-		log.info("list");
-		model.addAttribute("list",service.getList());
+	public void list(Criteria cri, Model model) {
+		
+		log.info("list" + cri);
+		
+		int total = service.getTotal(cri);
+		
+		log.info("total : " + total);
+		
+		model.addAttribute("list" , service.getList(cri));
+		model.addAttribute("pageMaker", new PageDTO(cri,total));
 	}
+	
+	
+	//@GetMapping("/list")
+	//public void list(Model model) {
+	//	log.info("list");
+	//	model.addAttribute("list",service.getList());
+	//}
+	
+	
 	
 	//게시물의 등록 작업은 POST방식으로 처리하지만 화면에서 
 	//입력을 받아야 하므로 GET방식으로 입력 페이지를 처리한다.
@@ -48,8 +67,11 @@ public class BoardController {
 		return "redirect:/board/list";
 	}
 	
+	//조회, 수정 입력 페이지 이동
+	// 조회페이지에서 리스트로 이동시 페이지 유지를 위해 Criteria를 파라미터로 받는다.
 	@GetMapping({"/get","/modify"})
-	public void get(@RequestParam("bno") Long bno, Model model) {
+	public void get(@RequestParam("bno") Long bno, Model model, 
+			@ModelAttribute("cri") Criteria cri) {
 		
 		log.info("/get");
 		
@@ -58,15 +80,35 @@ public class BoardController {
 	
 	
 	@PostMapping("/modify")
-	public String modify(BoardVO board, RedirectAttributes rttr) {
+	public String modify(BoardVO board, RedirectAttributes rttr,
+			@ModelAttribute("cri") Criteria cri) {
 		log.info("modify:" + board);
 		
 		if(service.modify(board)) {
 			rttr.addFlashAttribute("result","success");
 		}
+		//페이지 관련 파라미터 처리
+		rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());
+		
 		return "redirect:/board/list";
 	}
 	
+	@PostMapping("/remove")
+	public String remove(@RequestParam("bno") Long bno, RedirectAttributes rttr,
+			@ModelAttribute("cri") Criteria cri) {
+		
+		log.info("remove..." + bno);
+		if(service.remove(bno)) {
+			rttr.addFlashAttribute("result","success");
+		}
+		
+		//페이지 관련 파라미터 처리
+		rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());
+		
+		return "redirect:/board/list";
+	}
 	
 	
 }

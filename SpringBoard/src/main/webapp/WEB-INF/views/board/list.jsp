@@ -32,23 +32,52 @@
                                         <th>작성일</th>
                                         <th>수정일</th>
                                     </tr>
-                                </thead>
-		
-								<c:forEach items="${list}" var ="board">
-									
+                                </thead>	
+								<c:forEach items="${list}" var ="board">									
 									<tr>
 										<td>${board.bno}</td>
-										<td><a href="/board/get?bno=${board.bno}">${board.title}</a></td>
+										<td><a class="move" href="${board.bno}">${board.title}</a></td>
 										<td>${board.writer}</td>
 										<td><fmt:formatDate pattern ="yyyy-MM-dd" value ="${board.regdate}" /></td>
 										<td><fmt:formatDate pattern ="yyyy-MM-dd" value ="${board.updateDate}" /></td>
 									</tr>			
-							
-								
-								</c:forEach>
-								
+								</c:forEach>							
                             </table>
                             <!-- /.table-responsive -->
+
+						   <!--  페이지번호 처리 -->
+						   <div class="pull-right">
+						   	<ul class="pagination">
+						   	<!-- 이전페이지가 존재하면 이전 버튼을 보여줌 -->
+						  		<c:if test="${pageMaker.prev}">
+						  			<li class="paginate_button previous">
+						  			<a href ="${pageMaker.startPage-1}">Previous</a>
+						  			</li>
+						  		</c:if>
+						  		
+						  		<!-- 페이지의 시작과 끝을 반복문으로 처리 -->
+						  		<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+						  			<li class="paginate_button ${pageMaker.cri.pageNum == num ? "active": "" }" >
+						  			<a href="${num}">${num}</a>
+						  			</li>
+						  		</c:forEach>
+						  		
+						  		<!--  다음 버튼 처리 -->
+						  		<c:if test="${pageMaker.next}">
+						  			<li class="paginate_button next">
+						  			<a href="${pageMaker.endPage+1}">Next</a>
+						  			</li>
+						  		</c:if>
+						   	</ul>
+						   </div>
+						<!-- /페이지 번호 처리 -->
+						
+						
+						<!-- 페이지 이동 이벤트를 위한 폼 -->
+						<form id="actionForm" action="/board/list" method="get">
+							<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+							<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+						</form>
 
 
                         </div>
@@ -126,7 +155,33 @@
 		
 		
 		
+		//페이지 이동 이벤트 처리
 		
+		var actionForm = $("#actionForm");
+		$(".paginate_button a").on("click",function(e){
+			
+			e.preventDefault();
+			
+			console.log("click");
+			
+			//액션폼의 pageNum의 값을 a링크를 누른 href의 값으로 바꿈
+			actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+			actionForm.submit();
+		});
+		
+		
+		//게시물 버튼을 눌렀을 때 조회페이지 이동
+		
+		$(".move").on("click",function(e){
+			
+			e.preventDefault();
+			// 폼에 input 속성을 추가하고 bno값을 넣는다
+			actionForm.append("<input type='hidden' name='bno' value='"+$(this).attr("href")+"'>");
+			// 폼의 액션 속성을 list에서 get으로 바꿔 조회페이지로 이동시킴
+			actionForm.attr("action","/board/get")
+			actionForm.submit();
+			
+		});
 		
 		
 	});

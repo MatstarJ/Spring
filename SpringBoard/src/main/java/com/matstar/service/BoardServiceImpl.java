@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.matstar.domain.BoardVO;
+import com.matstar.domain.Criteria;
 import com.matstar.mapper.BoardMapper;
 
 import lombok.AllArgsConstructor;
@@ -51,12 +52,28 @@ public class BoardServiceImpl implements BoardService {
 		return mapper.delete(bno)==1;
 	}
 
+	//페이지를 받아올 수 있도록 수정
 	@Override
-	public List<BoardVO> getList() {
+	public List<BoardVO> getList(Criteria cri) {
 		
-		log.info("getList.......");
+		log.info(" get List with criteria : " + cri);
 		
-		return mapper.getList();
+		return mapper.getListWithPaging(cri);
 	}
+	/*
+	 * @Override public List<BoardVO> getList() {
+	 * 
+	 * log.info("getList.......");
+	 * 
+	 * return mapper.getList(); }
+	 */
 	
+	
+	//전체 데이터 개수 구하기(Criteria를 받지 않아도 문제 없음)
+	@Override
+	public int getTotal(Criteria cri) {
+		
+		log.info("get total count");
+		return mapper.getTotalCount(cri);
+	}
 }

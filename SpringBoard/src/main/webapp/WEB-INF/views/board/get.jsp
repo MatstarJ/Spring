@@ -57,6 +57,9 @@
                            	 
 							<form id="operForm" action="/board/modify" method="get">
 								<input type="hidden" id="bno" name="bno" value="${board.bno}">
+								<!-- 페이지 유지를 위한 값, list로부터 넘겨 받아 수정 페이지로 넘긴다. -->
+								<input type="hidden" name="pageNum" value="${cri.pageNum}">
+								<input type="hidden" name="amount" value="${cri.amount}">
 							</form>
 
 

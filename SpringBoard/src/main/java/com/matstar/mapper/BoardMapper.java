@@ -3,6 +3,7 @@ package com.matstar.mapper;
 import java.util.List;
 
 import com.matstar.domain.BoardVO;
+import com.matstar.domain.Criteria;
 
 
 
@@ -26,4 +27,9 @@ public interface BoardMapper {
 	public int update(BoardVO board);
 	
 	
+	//페이지 처리를 위한 메소드
+	public List<BoardVO> getListWithPaging(Criteria cri);
+	
+	//전체 데이터를 구하는 메소드(Criteria를 받지 않아도 문제 없음)
+	public int getTotalCount(Criteria cri);
 }

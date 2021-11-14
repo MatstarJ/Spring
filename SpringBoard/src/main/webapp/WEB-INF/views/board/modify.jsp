@@ -26,7 +26,7 @@
                           
                          <form role="form" action="/board/modify" method="post">
                          <!--  입력 폼 페이지 -->
-      	
+      		
                            	<div class="form-group">
                            		<label>Bno</label>
                            		<input class="form-control" name="bno" value="${board.bno}" readonly>                           	
@@ -60,7 +60,10 @@
                            	<button type="submit" data-oper="modify" class="btn btn-danger">Remove</button>
                            	<button type="submit" data-oper="list" class="btn btn-info">List</button>
                            	 
-
+								
+							<!-- get(조회)페이지로부터 넘겨 받은 값 -->	
+							<input type="hidden" name="pageNum" value="${cri.pageNum}">
+							<input type="hidden" name="amount" value="${cri.amount}">
 						</form>
 
                         </div>
@@ -98,9 +101,15 @@
 			}else if(operation === "list") {
 				//location.href ="/board/list";
 				
-			//리스트로 이동시 폼안의 내용을 전부 삭제처리 (안그러면 모달창 뜸)	
+			//리스트로 이동시 페이지 값만 복사해서 넣고 나머지 삭제0 (안그러면 모달창 뜸)	
 				formObj.attr("action","/board/list").attr("method","get");
+			
+				var pageNumTag = $("input[name='pageNum']").clone();	
+				var amountTag = $("input[name='pageNum']").clone();	
+			
 				formObj.empty();
+				formObj.append(pageNumTag);
+				formObj.append(amountTag);
 			}	
 			formObj.submit();	
 		});
