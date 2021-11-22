@@ -60,6 +60,10 @@
 								<!-- 페이지 유지를 위한 값, list로부터 넘겨 받아 수정 페이지로 넘긴다. -->
 								<input type="hidden" name="pageNum" value="${cri.pageNum}">
 								<input type="hidden" name="amount" value="${cri.amount}">
+								<!-- 검색어 유지 -->
+								<input type="hidden" name="keyword" value="${cri.keyword}">
+								<input type="hidden" name="type" value="${cri.type}">
+								
 							</form>
 
 

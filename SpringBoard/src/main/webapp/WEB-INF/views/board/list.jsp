@@ -45,6 +45,31 @@
                             </table>
                             <!-- /.table-responsive -->
 
+							<!-- 검색 처리 -->
+							<div class ="row">
+								<div class="col-lg-12">
+									<form id="searchForm" action="/board/list" method="get">
+									 <!--  검색어 유지 처리 -->
+										<select name="type">
+											<option value=""  ${pageMaker.cri.type == null ? 'selected' : ''}>---</option>
+											<option value="T"  ${pageMaker.cri.type eq 'T' ? 'selected' : ''}>제목</option>
+											<option value="C"  ${pageMaker.cri.type eq 'C' ? 'selected' : ''}>내용</option>
+											<option value="W"  ${pageMaker.cri.type eq 'W' ? 'selected' : ''}>작성자</option>
+											<option value="TC" ${pageMaker.cri.type eq 'TC' ? 'selected' : ''}>제목 or 내용</option>
+											<option value="TW" ${pageMaker.cri.type eq 'TW' ? 'selected' : ''}>제목 or 작성자</option>
+											<option value="TWC" ${pageMaker.cri.type eq 'TWC' ? 'selected' : ''}>전체검색</option>
+										</select>
+										
+										<input type="text" name="keyword" value ="${pageMaker.cri.keyword}">
+										<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+										<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+										<button class="btn btn-default">Search</button>
+									</form>					
+								</div>
+							</div>
+
+
+
 						   <!--  페이지번호 처리 -->
 						   <div class="pull-right">
 						   	<ul class="pagination">
@@ -57,7 +82,7 @@
 						  		
 						  		<!-- 페이지의 시작과 끝을 반복문으로 처리 -->
 						  		<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-						  			<li class="paginate_button ${pageMaker.cri.pageNum == num ? "active": "" }" >
+						  			<li class="paginate_button ${pageMaker.cri.pageNum == num ? 'active': '' }" >
 						  			<a href="${num}">${num}</a>
 						  			</li>
 						  		</c:forEach>
@@ -77,6 +102,8 @@
 						<form id="actionForm" action="/board/list" method="get">
 							<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 							<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+							<input type="hidden" name="type" value="${pageMaker.cri.type}">
+							<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
 						</form>
 
 
@@ -182,6 +209,41 @@
 			actionForm.submit();
 			
 		});
+		
+		
+		//검색 버튼 이벤트 처리
+		var searchForm = $("#searchForm");
+		
+		$("#searchForm button").on("click", function(e){
+			
+			if(!searchForm.find("option:selected").val()){
+				alert("검색 종류를 선택하세요");
+				return false;	
+			}
+			
+			if(!searchForm.find("input[name='keyword']").val()){
+				alert("키워드를 입력하세요");
+				return false;
+			}
+			
+			//검색 버튼을 누르면 페이지값은 1페이지로
+			searchForm.find("input[name='pageNum']").val("1");
+			e.preventDefault();
+			
+			searchForm.submit();
+			
+		});
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	});

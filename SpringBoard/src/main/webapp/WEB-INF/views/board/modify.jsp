@@ -57,13 +57,16 @@
                            	
                            	
                            	<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
-                           	<button type="submit" data-oper="modify" class="btn btn-danger">Remove</button>
+                           	<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
                            	<button type="submit" data-oper="list" class="btn btn-info">List</button>
                            	 
 								
 							<!-- get(조회)페이지로부터 넘겨 받은 값 -->	
 							<input type="hidden" name="pageNum" value="${cri.pageNum}">
 							<input type="hidden" name="amount" value="${cri.amount}">
+							<!-- 검색어 유지 -->
+							<input type="hidden" name="keyword" value="${cri.keyword}">
+							<input type="hidden" name="type" value="${cri.type}">
 						</form>
 
                         </div>
@@ -101,15 +104,19 @@
 			}else if(operation === "list") {
 				//location.href ="/board/list";
 				
-			//리스트로 이동시 페이지 값만 복사해서 넣고 나머지 삭제0 (안그러면 모달창 뜸)	
+			//리스트로 이동시 페이지 값만 복사해서 넣고 나머지 삭제 (안그러면 모달창 뜸)	
 				formObj.attr("action","/board/list").attr("method","get");
 			
 				var pageNumTag = $("input[name='pageNum']").clone();	
 				var amountTag = $("input[name='pageNum']").clone();	
+				var keywordTag = $("input[name='keyword']").clone();
+				var typeTag = $("input[name'type']").clone();
 			
 				formObj.empty();
 				formObj.append(pageNumTag);
 				formObj.append(amountTag);
+				formObj.append(keywordTag);
+				formObj.append(typeTag);
 			}	
 			formObj.submit();	
 		});
