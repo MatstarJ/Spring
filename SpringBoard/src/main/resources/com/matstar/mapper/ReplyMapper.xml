@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matstar.mapper.ReplyMapper">
+
+<insert id="insert">
+	INSERT INTO TBL_REPLY (RNO, BNO, REPLY, REPLYER) VALUES (SEQ_REPLY.NEXTVAL, #{bno}, #{reply}, #{replyer})
+</insert>
+
+<select id="read" resultType="com.matstar.domain.ReplyVO">
+	SELECT * FROM TBL_REPLY WHERE RNO = #{rno}
+</select>
+
+<delete id="delete">
+	DELETE FROM TBL_REPLY WHERE RNO = #{rno}
+</delete>
+
+<update id="update">
+	UPDATE TBL_REPLY SET REPLY = #{reply}, UPDATEDATE = SYSDATE
+	WHERE
+	RNO = #{rno}
+</update>
+
+<select id="getListWithPaging" resultType="com.mat.domain.ReplyVO">
+	SELECT RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+	FROM TBL_REPLY
+	WHERE BNO = #{bno}
+	ORDER BY RNO ASC
+</select>
+</mapper>

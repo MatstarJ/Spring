@@ -32,4 +32,5 @@ public interface BoardMapper {
 	
 	//전체 데이터를 구하는 메소드(Criteria를 받지 않아도 문제 없음)
 	public int getTotalCount(Criteria cri);
+	
 }
