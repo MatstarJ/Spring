@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="../include/header.jsp" %>
@@ -85,6 +84,7 @@
 </body>
 
 
+<script type="text/javascript" src="/resources/js/reply.js"></script>
 <script type="text/javascript">
 
 	$(document).ready(function(){
@@ -115,6 +115,72 @@
 
 </script>
 
+<!-- AjaxTest -->
+<script type="text/javascript">
+	
+	console.log("=================");
+	console.log("JS TEST");
+	
+	var bnoValue = "<c:out value='${board.bno}'/>";
+	
+	//for replyService add test (등록)
+	replyService.add(
+	
+		{reply:"JS Test", replyer:"tester", bno:bnoValue}
+		,
+		function(result) {
+			alert("RESULT : " + result);
+		}
+	
+	);
+
+	
+	//for getList test (목록)
+	
+	replyService.getList({bno:bnoValue, page:1}, function(list){
+		
+		for(var i =0, len = list.length || 0; i<len; i++) {
+			console.log(list[i]);
+		}
+		
+	});
+	
+	
+	
+	// for delete test(삭제)
+	
+	replyService.remove(23, function(count){
+		
+		console.log(count);
+		
+		if(count === "success") {
+			alert("REMOVED");
+		}
+	}, 
+		function(err) {
+			alert("ERROR");
+		}
+	);
+	
+	
+	//for update (수정)
+	replyService.update({
+		rno:22,
+		bno:bnoValue,
+		reply:"Modifyed Reply..."
+	}, 
+	function(result) {
+		alert("수정 완료");
+	
+	});
+	
+	
+	//for get(조회)
+	replyService.get(10,function(data){
+		console.log(data);
+	});
+	
+</script>
 
 
 
