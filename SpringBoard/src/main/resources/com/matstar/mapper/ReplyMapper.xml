@@ -20,7 +20,7 @@
 	RNO = #{rno}
 </update>
 
-<select id="getListWithPaging" resultType="com.mat.domain.ReplyVO">
+<select id="getListWithPaging" resultType="com.matstar.domain.ReplyVO">
 	SELECT RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
 	FROM TBL_REPLY
 	WHERE BNO = #{bno}

@@ -56,6 +56,8 @@ public class ReplyController {
 		Criteria cri = new Criteria(page,10);
 		
 		log.info(cri);
+		log.info("page"+page);
+		log.info("bno"+bno);
 		
 		return new ResponseEntity<>(service.getList(cri, bno),HttpStatus.OK);
 	}

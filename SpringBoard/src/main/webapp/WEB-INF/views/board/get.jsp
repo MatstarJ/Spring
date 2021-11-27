@@ -68,6 +68,35 @@
 
                         </div>
                         <!-- /.panel-body -->
+                        
+                        
+                        <!-- 댓글 -->
+                        <div class ="row">
+                        	<div class="col-lg-12">
+                        		<div class="panel panel-default">
+                        			<div class ="panel-heading">
+                        				<i class="fa fa-comments fa-fw"></i> Reply
+                        			<button id ="addReplyBtn" class="btn btn-primary btn-xs pull-right">New Reply</button>
+                        			</div>
+                        				<div class="panel-body">
+                        					<ul class="chat">
+	                        					<!-- <li class="left clearfix" data-rno="12">
+	                        						<div>
+	                        							<div class="header">
+	                        								<strong class="primary-font">user00</strong>
+	                        								<small class="pull-right text-muted">2020-10-10</small>
+	                        							</div>
+	                        							<p>Good job!</p>
+	                        						</div>
+	                        					</li> -->
+                        					</ul>
+                        				</div>
+                        		</div>
+                        	</div>
+                        </div>
+                        
+             
+                        
                     </div>
                     <!-- /.panel -->
                 </div>
@@ -88,6 +117,43 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		
+		//댓글 목록 불러옴
+		
+		var bnoValue = "<c:out value='${board.bno}'/>";
+		var replyUL = $(".chat");
+		
+		//기본 페이지값을 1로 aJax함수 호출  
+		showList(1);
+		
+		//Ajax함수
+		function showList(page) {
+			
+			//매객밧으로 bno, page, callback함수를 준다.
+			// 페이지 파라미터가 없을 경우 1로 처리
+			replyService.getList({bno:bnoValue, page:page|| 1}, function(list){
+				
+				var str = "";
+				
+				//콜백함수의 매개변수, Ajax의 리턴값에 대한 처리
+				// 값이 없으면 html 출력하지말고 종료
+				if(list == null || list.length == 0) {
+					replyUL.html("");
+					return;
+				}
+				
+			       for (var i = 0, len = list.length||0; i<len; i++) {
+			    	   str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+			           str +=" <div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>"; 
+			           str +=" <small class='pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+"</small></div>";
+			           str +="  <p>"+list[i].reply+"</p></div></li>";
+			            }
+				
+				replyUL.html(str);
+			});
+		}	
+		
+		
 
 		
 		
@@ -108,15 +174,14 @@
 			operForm.submit();
 			
 		});
-		
-		
+
 		
 	});
 
 </script>
 
 <!-- AjaxTest -->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 	
 	console.log("=================");
 	console.log("JS TEST");
@@ -180,7 +245,7 @@
 		console.log(data);
 	});
 	
-</script>
+</script> -->
 
 
 
