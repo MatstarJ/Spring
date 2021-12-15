@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class ReplyMapperTests {
 
-	private Long[] bnoArr = {1231L, 1230L, 1233L, 1234L, 1235L};
+	private Long[] bnoArr = {2061L, 2063L, 2064L, 2066L, 2067L};
 	
 	@Setter(onMethod_= @Autowired)
 	private ReplyMapper mapper;
@@ -40,7 +40,7 @@ public class ReplyMapperTests {
 		//게시물 번호
 		vo.setBno(bnoArr[i % 5]);
 		vo.setReply("댓글 테스트" + i);
-		vo.setReply("replyer" + i);
+		vo.setReplyer("replyer" + i);
 		
 		mapper.insert(vo);
 		
@@ -65,7 +65,7 @@ public class ReplyMapperTests {
 	//수정 테스트
 	@Test
 	public void testUpdate() {
-		Long targetRno = 10L;
+		Long targetRno = 21L;
 		
 		ReplyVO vo = mapper.read(targetRno);
 		
@@ -74,12 +74,22 @@ public class ReplyMapperTests {
 		log.info("UPDATE COUNT:" + count);
 	}
 	
-	//페이징
+	//댓글목록
 	@Test
 	public void testList() {
 		Criteria cri = new Criteria();
 		List<ReplyVO> replies = mapper.getListWithPaging(cri, bnoArr[0]);
 		
 		replies.forEach(reply -> log.info(reply));
+	}
+	
+	//페이징
+	@Test
+	public void  testList2() {
+		Criteria cri = new Criteria(2,10);
+		
+		List<ReplyVO> replies = mapper.getListWithPaging(cri, bnoArr[0]);
+		
+		replies.forEach(null);
 	}
 }

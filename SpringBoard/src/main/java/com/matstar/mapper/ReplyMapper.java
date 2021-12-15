@@ -24,7 +24,10 @@ public interface ReplyMapper {
 	
 	//댓글 페이지 처리, 두 개 이상의 데이터를 파라미터로 전달하기 위해 @Param 어노테이션을 사용
 	// Map이나 별도의 객체를 사용하는 방법도 있다.
-	public List<ReplyVO> getListWithPaging(@Param("cri") Criteria cri, @Param("bno") Long bno);
+	public List<ReplyVO> getListWithPaging(
+			@Param("cri") Criteria cri,
+			@Param("bno") Long bno);
 			
-				
+	// 전체 댓글 갯수를 가져옴
+	public int getCountByBno(Long bno);			
 }

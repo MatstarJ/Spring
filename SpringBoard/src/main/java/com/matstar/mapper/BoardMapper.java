@@ -2,6 +2,8 @@ package com.matstar.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.matstar.domain.BoardVO;
 import com.matstar.domain.Criteria;
 
@@ -32,5 +34,9 @@ public interface BoardMapper {
 	
 	//전체 데이터를 구하는 메소드(Criteria를 받지 않아도 문제 없음)
 	public int getTotalCount(Criteria cri);
+	
+	// 댓글 총 갯수 
+	// 게시물 번호와 댓글의 증감을 파라미터로 받을 수 있도록 처리한다.
+	public void updateReplyCnt(@Param("bno") Long bno, @Param("amount") int amount);
 	
 }

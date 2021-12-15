@@ -24,9 +24,7 @@ var replyService = (function() {
             }
         });
     }
- 		
- 		
- 		
+
     //댓글목록 
 	function getList(param, callback, error) {
 
@@ -45,8 +43,7 @@ var replyService = (function() {
 			}
 		});
 	}
- 		
- 		
+
     // 댓글 삭제
     function remove(rno, callback, error) {
         $.ajax({
@@ -65,8 +62,7 @@ var replyService = (function() {
         });
     } 
 
- 		
- 		
+
     //댓글 수정
     function update(reply, callback, error) {
 
@@ -89,9 +85,8 @@ var replyService = (function() {
             }
         });
     }
- 			
- 			
- 		
+
+
     // 댓글 조회
     function get(rno, callback, error) {
 
@@ -105,9 +100,11 @@ var replyService = (function() {
                 error();
             }
         });
-    }	
- 		
- 		
+    }
+
+
+
+
     //댓글 시간처리
 
     function displayTime(timeValue) {
@@ -150,9 +147,5 @@ var replyService = (function() {
             get:get,
             displayTime : displayTime
             };
- 		
- 		
 
- 	
- 	
- 	})();
+})();

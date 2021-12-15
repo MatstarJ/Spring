@@ -21,7 +21,7 @@ import com.matstar.service.ReplyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
-@RequestMapping("/replies")
+@RequestMapping("/replies/")
 @RestController
 @Log4j
 @AllArgsConstructor
@@ -33,17 +33,21 @@ public class ReplyController {
 	//등록
 	// JSON 타입으로 된 댓글 데이터를 전송하고 서버에서는 댓글의 처리 결과가
 	// 정상적으로 되었는지 문자열로 결과를 알려주도록 한다.
+	// 데이터를 json 형태로 받아서 문자열 형태로 반환하도록 처리한다.
+	//consumes는 클라이언트가 서버에게 보내는 데이터 타입을 명시한다.
+	//produces는 서버가 클라이언트에게 반환하는 데이터 타입을 명시한다.
 	// @RequestBody Json타입을 ReplyVO 타입으로 변환
-	@PostMapping(value ="/new", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
+	@PostMapping(value ="/new", consumes ="application/json", produces = { MediaType.TEXT_PLAIN_VALUE })
 	public ResponseEntity<String> create(@RequestBody ReplyVO vo) {
 		
-		log.info("ReplyVO : " + vo);
+		log.info("ReplyVO :" + vo);
 		
 		int insertCount = service.register(vo);
 		
 		log.info("Reply Insert Count : " + insertCount);
 		
-		return insertCount == 1 ? new ResponseEntity<>("success",HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		return insertCount == 1 ? new ResponseEntity<>("success", HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		
 	}
 	
 
@@ -56,41 +60,45 @@ public class ReplyController {
 		Criteria cri = new Criteria(page,10);
 		
 		log.info(cri);
-		log.info("page"+page);
-		log.info("bno"+bno);
+		log.info("page : "+page);
+		log.info("bno : "+bno);
 		
 		return new ResponseEntity<>(service.getList(cri, bno),HttpStatus.OK);
 	}
 	
 	//댓글 조회
-	@GetMapping(value="/{rno}",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_UTF8_VALUE})
+	@GetMapping (value ="/{rno}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<ReplyVO> get(@PathVariable("rno") Long rno) {
 		
-		log.info("get : " + rno);
+		log.info("get" + rno);
 		
-		return new ResponseEntity<>(service.get(rno),HttpStatus.OK);
+		return new ResponseEntity<>(service.get(rno), HttpStatus.OK);
 	}
 	
 	
 	//댓글 삭제
-	@DeleteMapping(value="/{rno}", produces = {MediaType.TEXT_PLAIN_VALUE})
+	@DeleteMapping(value ="/{rno}", produces = {MediaType.TEXT_PLAIN_VALUE})
 	public ResponseEntity<String> remove(@PathVariable("rno") Long rno) {
+		
 		log.info("remove : " + rno);
 		
-		return service.remove(rno) == 1 ? new ResponseEntity<>("success",HttpStatus.OK): new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		return service.remove(rno) == 1 ? new ResponseEntity<>("success", HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				
 	}
 	
 	
 	//댓글 수정
-	@RequestMapping(method = {RequestMethod.PUT, RequestMethod.PATCH}, value = "/{rno}", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
+	@RequestMapping(method= {RequestMethod.PUT, RequestMethod.PATCH}, value = "/{rno}", consumes = "application/json",  produces = {MediaType.TEXT_PLAIN_VALUE})
 	public ResponseEntity<String> modify(@RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
 		
 		vo.setRno(rno);
 		
 		log.info("rno : " + rno);
 		
-		return service.modify(vo) == 1 ? new ResponseEntity<>("success",HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		log.info("modify : " + vo);
+		
+		return service.modify(vo) ==1 ? new ResponseEntity<>("success",HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	
+
 }
