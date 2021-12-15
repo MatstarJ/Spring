@@ -4,14 +4,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.mat.mapper.BoardMapper;
 import com.matstar.domain.Criteria;
 import com.matstar.domain.ReplyVO;
 import com.matstar.mapper.ReplyMapper;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 @Service
 @Log4j
+@AllArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 	
 	private ReplyMapper mapper;
