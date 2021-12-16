@@ -16,6 +16,7 @@ var replyService = (function() {
         success : function(result, status, xhr) {  //status서버에 대한 응답코드, xhr 헤더?
             if(callback) {
                 callback(result);  //callback(결과) 내부의 처리결과를 외부로 내보냄 
+          
                 }},
         error : function(xhr, status, er) {
             if(error) {
@@ -34,8 +35,8 @@ var replyService = (function() {
 		$.getJSON("/replies/pages/" + bno + "/" + page + ".json",
 				function(data) {
 					if (callback) {
-						callback(data);   //댓글 목록만 가져오는 경우
-                        //callback(data.replyCnt, data.list);
+						//callback(data);   댓글 목록만 가져오는 경우
+                        callback(data.replyCnt, data.list);
 					}
 				}).fail(function(xhr, status, err) {
 			if (error) {

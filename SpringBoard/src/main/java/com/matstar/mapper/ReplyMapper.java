@@ -28,6 +28,6 @@ public interface ReplyMapper {
 			@Param("cri") Criteria cri,
 			@Param("bno") Long bno);
 			
-	// 전체 댓글 갯수를 가져옴
+	// 해당 게시글의 전체 댓글 갯수를 가져옴
 	public int getCountByBno(Long bno);			
 }

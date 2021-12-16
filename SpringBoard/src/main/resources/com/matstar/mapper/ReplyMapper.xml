@@ -20,8 +20,9 @@
 	RNO = #{rno}
 </update>
 
+<!--  페이징을 결합한 댓글 목록 -->
 <select id="getListWithPaging" resultType="com.matstar.domain.ReplyVO">
-<!-- 	<![CDATA[
+	<![CDATA[
 		SELECT RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
 		FROM
 		(
@@ -32,12 +33,23 @@
 			AND RNO > 0
 			AND ROWNUM <= #{cri.pageNum} * #{cri.amount}
 		)
-		WHERE RN > ( #{cri.pageNum} -1 ) * #{cri>amount} 
-	]]> -->
+		WHERE RN > ( #{cri.pageNum} -1 ) * #{cri.amount} 
+	]]>
 	
-	SELECT RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+	
+<!-- 댓글 목록 -->
+<!-- 	SELECT RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
 	FROM TBL_REPLY
 	WHERE BNO = #{bno}
-	ORDER BY RNO ASC
+	ORDER BY RNO ASC -->
 </select>
+
+
+<!--  댓글 갯수 -->
+<select id="getCountByBno" resultType="int">
+<![CDATA[
+	SELECT COUNT(RNO) FROM TBL_REPLY WHERE BNO = #{bno}
+]]>
+</select>
+
 </mapper>

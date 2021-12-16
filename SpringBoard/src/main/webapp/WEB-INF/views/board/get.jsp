@@ -83,7 +83,11 @@
 			        <!-- ./ end ul -->
 			      </div>
 			      <!-- /.panel .chat-panel -->
-				<div class="panel-footer"></div>
+			      <!-- 댓글 페이지부분 -->
+				<div class="panel-footer">
+					
+				
+				</div>
 
 			</div>
 	       </div>
@@ -169,9 +173,19 @@
 			
 			//매개값으로 bno, page, callback함수를 준다.
 			// 페이지 파라미터가 없을 경우 1로 처리
-			replyService.getList({bno:bnoValue,page: page|| 1 }, function(list) {
+			replyService.getList({bno:bnoValue,page: page|| 1 }, function(replyCnt,list) {
 				
+				console.log("replyCnt : "+ replyCnt);
 				console.log("list : " + list);
+	
+			//페이지 번호가 -1로 전달되면 마지막 페이지를 찾아서 다시 호출한다.
+				if(page == -1) {
+					pageNum = Math.ceil(replyCnt/10.0);
+					showList(pageNum);
+					return;
+				}
+				
+				
 				var str = "";
 				
 				//콜백함수의 매개변수, Ajax의 리턴값에 대한 처리
@@ -181,20 +195,109 @@
 			           return;
 				}
 				
-	                for (var i = 0, len = list.length || 0; i < len; i++) {
-	                    str += "<li class='left clearfix' data-rno='" + list[i].rno + "'>";
-	                    str += "<div><div class='header'><strong class='primary-font'>" + list[i].replyer + "</strong>";
-	                    str += "<small class='pull-right text-muted'>" + replyService.displayTime(list[i].replyDate) + "</small></div>";
-	                    str += "<p>" + list[i].reply + "</p></div></li>";
-	                }
+			       for (var i = 0, len = list.length || 0; i < len; i++) {
+			    	   str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+			           str +=" <div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>"; 
+			           str +=" <small class='pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+"</small></div>";
+			           str +="  <p>"+list[i].reply+"</p></div></li>";
+			            }
+			       
 	                replyUL.html(str);
+	                // 댓글 페이지 번호 출력
+	                showReplyPage(replyCnt);
 			});
 		}	
+	
+	
+	
+	//댓글 페이지 처리
+	
+	//현재 페이지 번호
+	var pageNum = 1;
+	
+	var replyPageFooter = $(".panel-footer");
+	
+	function showReplyPage(replyCnt){
+	
+		//마지막 페이지
+		var endNum = Math.ceil(pageNum / 10.0) * 10;
+		
+		// 시작 페이지
+		var startNum = endNum -9;
+		
+		// 이전
+		var prev = startNum != 1;
+		
+		// 다음
+		var next = false;
 		
 		
-	//댓글작성버튼처리
+		//마지막 페이지를 실제 계산한 값과 비교한다. 
+		//10을 곱한 이유는 replyCnt값이 총 데이터 갯수이고
+		//endNum은 페이지 번호로 페이지당 보여줄 갯수 (10)을 나눠준 값이기 때문임
+		//실제 데이터 값이 더 작으면 실제 값을 10으로 나눠 페이지 번호로 만듬
+	      if(endNum * 10 >= replyCnt){
+	          endNum = Math.ceil(replyCnt/10.0);
+	        }
+		
+		
+	      if(endNum * 10 < replyCnt){
+	          next = true;
+	        }
+		
+		
+		//html 작성
+		var str = "<ul class='pagination pull-right'>";
+		
+        if(prev){
+            str+= "<li class='page-item'><a class='page-link' href='"+(startNum-1)+"'>Previous</a></li>";
+          }
+		
+		//페이지 번호 html 처리
+		 for(var i = startNum ; i <= endNum; i++){
+			
+			 var active = pageNum == i ? "active" : "";
+			
+	         str+= "<li class='page-item "+active+" '><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+         }
+		
+		//next 조건 처리
+	        if(next){
+	            str+= "<li class='page-item'><a class='page-link' href='"+(endNum + 1)+"'>Next</a></li>";
+	          }
+		
+		str +="</ul></div>";
 
+		console.log ("댓글 페이지 처리 확인 : " + str);
 		
+		replyPageFooter.html(str);	
+	}
+	
+	
+	// 댓글 페이지 번호 클릭 시 새로운 댓글을 가져오는 이벤트
+	
+	//replyPageFooter = $(".panel-footer")
+	replyPageFooter.on("click","li a",function(e){
+		
+		e.preventDefault();
+		console.log("page click");
+		
+		// this = li a
+		var targetPageNum = $(this).attr("href");
+		
+		console.log("targetPageNum : " + targetPageNum);
+		
+		//pageNum을 클릭한 값으로 변경
+		pageNum = targetPageNum;
+		
+		showList(pageNum);
+	})
+		
+		
+		
+		
+	//댓글작성버튼 이벤트 처리
+	
 	//버튼 이벤트 처리
 		var operForm = $("#operForm");
 		
@@ -242,9 +345,8 @@
     });
 	
 	
+	
 	//댓글 모달창의 글 등록 버튼 이벤트처리
-	
-	
 	//댓글 등록 버튼 누르면
 	modalRegisterBtn.on("click",function(e){
 		
@@ -263,7 +365,10 @@
             modal.find("input").val("");
             modal.modal("hide");
 			
-			showList(1);
+			//showList(1);
+			//사용자가 새로운 댓글을 추가하면 showList(-1)을 호출하여 전체 댓글의 수를 파악하도록 한다. 
+			// 그 후 다시 if 조건식에 의해 마지막 페이지를 호출해서 이동한다.
+			showList(-1);
 		});
 		
 	});
@@ -305,7 +410,8 @@
 			
 			alert(result);
 			modal.modal("hide");
-			showList(1);
+		//수정 삭제 후 다시 보고 있는 페이지로 이동하도록 처리
+			showList(pageNum);
 		});
 	});
 		

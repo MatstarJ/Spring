@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.mat.mapper.BoardMapper;
 import com.matstar.domain.Criteria;
+import com.matstar.domain.ReplyPageDTO;
 import com.matstar.domain.ReplyVO;
 import com.matstar.mapper.ReplyMapper;
 
@@ -57,5 +57,13 @@ public class ReplyServiceImpl implements ReplyService {
 		return mapper.getListWithPaging(cri, bno);
 	}
 
+	//댓글 페이지 처리
+	@Override
+	public ReplyPageDTO getListPage(Criteria cri, Long bno) {
+		
+		return new ReplyPageDTO(
+				mapper.getCountByBno(bno),mapper.getListWithPaging(cri, bno)
+				);
+	}
 	
 }
