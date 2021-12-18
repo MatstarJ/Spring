@@ -44,11 +44,11 @@
 
 <select id="getListWithPaging" resultType="com.matstar.domain.BoardVO">
 	<![CDATA[
-		SELECT BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+		SELECT BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
 		FROM
 			(
 			SELECT /*+INDEX_DESC(TBL_BOARD PK_BOARD) */
-				ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+				ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
 			FROM
 				TBL_BOARD
 			WHERE
@@ -94,5 +94,9 @@
 		</trim>
 	</sql>
 
+<!--  댓글의 총 갯수 카운트 -->	
+	<update id="updateReplyCnt">
+		UPDATE TBL_BOARD SET REPLYCNT = REPLYCNT + #{amount} WHERE BNO = #{bno}
+	</update>
 
 </mapper>

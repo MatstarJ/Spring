@@ -15,4 +15,7 @@ public class BoardVO {
 	private Date updateDate;
 	
 	
+	// 게시물 별 댓글 전체 카운트
+	private int replyCnt;
+	
 }
