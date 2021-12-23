@@ -1,15 +1,23 @@
 package com.matstar.controller;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -172,7 +181,8 @@ public class UploardController {
 					FileOutputStream thumnail = new FileOutputStream(new File(uploadPath,"s_"+uploadFileName));
 					
 					Thumbnailator.createThumbnail(multipartFile.getInputStream(),thumnail,100,100);
-					
+					//Thumbnailator.createThumbnail( new FileInputStream(new File(uploadPath, uploadFileName)), thumbnail, 100, 100 );
+					//위의 방법으로 해도 가능
 					thumnail.close();
 				}
 				
@@ -188,7 +198,7 @@ public class UploardController {
 		
 	}
 	
-	
+
 //	@PostMapping("/uploadAjaxAction")
 //	public void uploadAjaxPost(MultipartFile[] uploadFile) {
 		
@@ -281,6 +291,115 @@ public class UploardController {
 		
 		return result;
 	}
+	
+	
+	
+	
+	//다운로드 처리
+	@GetMapping(value="/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody
+	//@RequestHeader HTTP의 헤더 메시지를 수집
+	//User-Agent : Http의 헤더 메시지 중에서 디바이스의 정보를 알 수있는 UserAgent를 이용해 파라미터로 수집한다.
+	public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent") String userAgent,  String fileName){
+		
+		log.info("download file : " + fileName);
+		Resource resource = new FileSystemResource("c:\\upload\\"+fileName);
+		log.info("resource : " + resource);
+		
+		if(resource.exists() == false) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		
+		
+		String resourceName = resource.getFilename();
+		log.info("resourceName : " + resourceName);
+		
+		//uuid를 제거한 원래의 파일 이름
+		String resourceOriginalName = resourceName.substring(resourceName.indexOf("_")+1);
+		log.info("resourceOriginalName : "+ resourceOriginalName);
+		
+		
+		HttpHeaders headers = new HttpHeaders();
+		log.info("headers : " + headers);
+		
+		
+		try {
+			
+			String downloadName = null;
+			
+			// 브라우저 별로 설정 추가
+			if(userAgent.contains("Trident")){
+				
+				log.info("IE browser");
+				
+				downloadName = URLEncoder.encode(resourceOriginalName,"UTF-8").replaceAll("\\+", " ");
+				
+				log.info("IE name : " + downloadName);
+				
+			}else if(userAgent.contains("Edge")) {
+				
+				log.info("Edgd browser");
+				
+				downloadName = URLEncoder.encode(resourceOriginalName,"UTF-8");
+				
+				log.info("Edge name : " + downloadName);
+				
+			}else {
+				
+				log.info("crome browser");
+				downloadName = new String(resourceOriginalName.getBytes("UTF-8"),"ISO-8859-1");
+				
+				log.info("Crome name : " + downloadName);
+			}
+			
+			
+			
+			//Content-Disposition : 다운로드 시 저장되는 이름 
+			//headers.add("Content-Disposition","attachment; filename="+new String(resourceName.getBytes("UTF-8"),"ISO-8859-1"));
+			headers.add("Content-Disposition","attachment; filename="+downloadName);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<Resource>(resource,headers,HttpStatus.OK);
+	}
+	
+	
+	
+	//첨부파일 삭제
+	@PostMapping("/deleteFile")
+	@ResponseBody
+	public ResponseEntity<String> deleteFile(String fileName, String type){
+		
+		log.info("deleteFile " + fileName);
+		
+		File file;
+		
+		try {
+			file = new File("c:\\upload\\" + URLDecoder.decode(fileName,"UTF-8"));
+			
+			file.delete();
+			
+			if(type.equals("image")) {
+				
+				String largeFileName = file.getAbsolutePath().replace("s_", "");
+				
+				log.info("largeFileName : " + largeFileName);
+				log.info("path" + file.getAbsolutePath());
+				file = new File(largeFileName);
+				
+				file.delete();
+				
+			}
+			
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+			return new ResponseEntity<>("deleted",HttpStatus.OK);
+	}
+	
 	
 
 		
