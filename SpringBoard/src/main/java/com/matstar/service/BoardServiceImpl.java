@@ -3,9 +3,12 @@ package com.matstar.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.matstar.domain.BoardAttachVO;
 import com.matstar.domain.BoardVO;
 import com.matstar.domain.Criteria;
+import com.matstar.mapper.BoardAttachMapper;
 import com.matstar.mapper.BoardMapper;
 
 import lombok.AllArgsConstructor;
@@ -18,14 +21,29 @@ import lombok.extern.log4j.Log4j;
 public class BoardServiceImpl implements BoardService {
 
 	private BoardMapper mapper;
+	
+	private BoardAttachMapper attachMapper;
 
 	//필요하다면 void 대신 selectKey의 반환값인 int를 사용할 수 있다.
+	
+	@Transactional
 	@Override
 	public void register(BoardVO board) {
 		
 		log.info("register..." + board);
 		
 		mapper.insertSelectKey(board);
+		
+		if(board.getAttachList() == null || board.getAttachList().size() <= 0) {
+			return;
+		}
+		
+		board.getAttachList().forEach(attach -> {
+			
+			attach.setBno(board.getBno());
+			attachMapper.insert(attach);
+		});
+		
 	}
 
 	@Override
@@ -75,5 +93,13 @@ public class BoardServiceImpl implements BoardService {
 		
 		log.info("get total count");
 		return mapper.getTotalCount(cri);
+	}
+
+	@Override
+	public List<BoardAttachVO> getAttachList(Long bno) {
+		
+		log.info("get Attach list by bno" + bno);
+		
+		return attachMapper.findByBno(bno);
 	}
 }

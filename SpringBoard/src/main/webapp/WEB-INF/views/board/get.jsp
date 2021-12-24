@@ -64,9 +64,83 @@
 
                         </div>
                         <!-- /.panel-body -->
+         
+         <!-- 첨부파일 영역 -->               
+         <div class="bigPictureWrapper">
+         	<div class="bigpitcure">
+         	</div>
+         </div>
+         
+         <style>
+         .uploadResult {
+         	width:100%;
+         	background-color : gray;
+         }
+         
+         .uploadResult ul {
+         	display : flex;
+         	flex-flow : row;
+         	justify-content : center;
+         	align-items : center;
+         }
+         
+         .uploadResult ul li {
+         	list-style : none;
+         	padding : 10px;
+         	align-content : center;
+         	text-align : center;
+         }
+         
+         .uploadResult ul li img {
+         	width : 100px;
+         }
+         
+         .uploadResult ul li span {
+         	color:white;
+         }
+         
+         .bigPictureWrapper {
+         	position : absolute;
+         	display : none;
+         	justify-content : center;
+         	align-items : center;
+         	top : 0%;
+         	width : 100%;
+         	height : 100%;
+         	background-color : gray;
+         	z-index : 100;
+         	background : rgba(255,255,255,0.5);
+         }
+         
+         .bigPicture {
+         	position : relative;
+         	display : flex;
+         	justify-content : center;
+         	align-items : center;
+         }
+         
+         .bigPicture img {
+         	width : 600px;
+         }         
+         </style>
+         
+         <div class="row">
+         	<div class="col-lg-12">
+         		<div class="panel panel-default">
+         			<div class="panel-heading">Files</div>
+         			<div class="panel-body">
+         				<div class="uploadResult">
+         					<ul>
+         					</ul>
+         				</div> 
+         			</div>  <!-- end panel body -->
+         		</div> <!-- end panel -->
+         	</div>
+         </div>
+         
+         
                         
-                        
-                        <!-- 댓글 -->
+         <!-- 댓글 -->
 			<div class='row'>
 			  <div class="col-lg-12">
 			    <!-- /.panel -->
@@ -431,6 +505,48 @@
 		 });
 		 
 	 });
+	 
+	 
+	 //게시물의 댓글을 가져오는 부분이 자동으로 동작하게 즉시실행 함수로 만듬
+	 (function(){
+		 
+	var bno = '<c:out value="${board.bno}"/>';
+		 
+	 $.getJSON("/board/getAttachList",{bno:bno},function(arr){
+		 
+		 
+		
+		 console.log(arr);
+		 
+		 var str = "";
+		 
+		 $(arr).each(function(i,attach){
+			
+			 //image
+			 if(attach.fileType) {
+				 
+			 var fileCallPath = encodeURIComponent(attach.uploadPath+"/s_"+attach.uuid+"_"+attach.fileName);
+			 
+			 str += "<li data-path='"+attach.uploadPath+"'data-uuid='"+attach.uuid+"' data-fileName='"+attach.fileName+"'data-type='"+attach.fileType+"'><div>";
+			 str += "<img src='/uploadSample/display?fileName="+fileCallPath+"'>";
+			 str += "</div>";
+			 str += "</li>";
+			 	 
+			 }else {
+				 str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"'><div>";
+				 str += "<span>"+attach.fileName+"</span><br/>";
+				 str += "<img src='/resources/img/attach.png'>";
+				 str += "</div>";
+				 str += "</li>";
+			 } 
+		 });
+		 
+		 $(".uploadResult ul").html(str);
+	 });
+	})();
+	 
+	 
+	 
 	 
 	
 	

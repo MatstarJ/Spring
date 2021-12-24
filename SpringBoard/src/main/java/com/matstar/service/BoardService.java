@@ -2,6 +2,7 @@ package com.matstar.service;
 
 import java.util.List;
 
+import com.matstar.domain.BoardAttachVO;
 import com.matstar.domain.BoardVO;
 import com.matstar.domain.Criteria;
 
@@ -26,4 +27,7 @@ public interface BoardService {
 	
 	//전체 데이터 개수 구하기(Criteria를 받지 않아도 문제 없음)
 	public int getTotal(Criteria cri);
+	
+	//게시물 번호로 첨부파일 목록을 가져옴
+	public List<BoardAttachVO> getAttachList(Long bno);
 }
