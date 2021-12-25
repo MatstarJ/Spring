@@ -3,6 +3,54 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="../include/header.jsp" %>
 
+     <style>
+		.uploadResult {
+		  width:100%;
+		  background-color: gray;
+		}
+		.uploadResult ul{
+		  display:flex;
+		  flex-flow: row;
+		  justify-content: center;
+		  align-items: center;
+		}
+		.uploadResult ul li {
+		  list-style: none;
+		  padding: 10px;
+		  align-content: center;
+		  text-align: center;
+		}
+		.uploadResult ul li img{
+		  width: 100px;
+		}
+		.uploadResult ul li span {
+		  color:white;
+		}
+		.bigPictureWrapper {
+		  position: absolute;
+		  display: none;
+		  justify-content: center;
+		  align-items: center;
+		  top:0%;
+		  width:100%;
+		  height:100%;
+		  background-color: gray; 
+		  z-index: 100;
+		  background:rgba(255,255,255,0.5);
+		}
+		.bigPicture {
+		  position: relative;
+		  display:flex;
+		  justify-content: center;
+		  align-items: center;
+		}
+		
+		.bigPicture img {
+		  width:600px;
+		}        
+      </style>
+
+
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -65,64 +113,16 @@
                         </div>
                         <!-- /.panel-body -->
          
+
+         
+         
          <!-- 첨부파일 영역 -->               
          <div class="bigPictureWrapper">
-         	<div class="bigpitcure">
+         	<div class="bigPicture">
          	</div>
          </div>
          
-         <style>
-         .uploadResult {
-         	width:100%;
-         	background-color : gray;
-         }
-         
-         .uploadResult ul {
-         	display : flex;
-         	flex-flow : row;
-         	justify-content : center;
-         	align-items : center;
-         }
-         
-         .uploadResult ul li {
-         	list-style : none;
-         	padding : 10px;
-         	align-content : center;
-         	text-align : center;
-         }
-         
-         .uploadResult ul li img {
-         	width : 100px;
-         }
-         
-         .uploadResult ul li span {
-         	color:white;
-         }
-         
-         .bigPictureWrapper {
-         	position : absolute;
-         	display : none;
-         	justify-content : center;
-         	align-items : center;
-         	top : 0%;
-         	width : 100%;
-         	height : 100%;
-         	background-color : gray;
-         	z-index : 100;
-         	background : rgba(255,255,255,0.5);
-         }
-         
-         .bigPicture {
-         	position : relative;
-         	display : flex;
-         	justify-content : center;
-         	align-items : center;
-         }
-         
-         .bigPicture img {
-         	width : 600px;
-         }         
-         </style>
+
          
          <div class="row">
          	<div class="col-lg-12">
@@ -507,12 +507,12 @@
 	 });
 	 
 	 
-	 //게시물의 댓글을 가져오는 부분이 자동으로 동작하게 즉시실행 함수로 만듬
+	 //게시물의 첨부파일을 가져오는 부분이 자동으로 동작하게 즉시실행 함수로 만듬
 	 (function(){
 		 
 	var bno = '<c:out value="${board.bno}"/>';
 		 
-	 $.getJSON("/board/getAttachList",{bno:bno},function(arr){
+	$.getJSON("/board/getAttachList", {bno:bno}, function(arr){
 		 
 		 
 		
@@ -522,32 +522,74 @@
 		 
 		 $(arr).each(function(i,attach){
 			
+			 console.log("파일 타입 확인 : " + attach.fileType);
+			 console.log("uploadPath 확인 : " + attach.uploadPath);
+			 console.log("uuid 확인 : " + attach.uuid);
+			 console.log("file name 확인 : " + attach.fileName);
 			 //image
-			 if(attach.fileType) {
-				 
-			 var fileCallPath = encodeURIComponent(attach.uploadPath+"/s_"+attach.uuid+"_"+attach.fileName);
-			 
-			 str += "<li data-path='"+attach.uploadPath+"'data-uuid='"+attach.uuid+"' data-fileName='"+attach.fileName+"'data-type='"+attach.fileType+"'><div>";
-			 str += "<img src='/uploadSample/display?fileName="+fileCallPath+"'>";
-			 str += "</div>";
-			 str += "</li>";
-			 	 
-			 }else {
-				 str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"'><div>";
-				 str += "<span>"+attach.fileName+"</span><br/>";
-				 str += "<img src='/resources/img/attach.png'>";
-				 str += "</div>";
-				 str += "</li>";
-			 } 
-		 });
-		 
-		 $(".uploadResult ul").html(str);
+	         if(attach.fileType){
+	        	 var fileCallPath =  encodeURIComponent( attach.uploadPath+ "/s_"+attach.uuid +"_"+attach.fileName);
+	             console.log("FilePath확인 : " + fileCallPath);
+		             str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"' ><div>";
+		             str += "<img src='/uploadSample/display?fileName="+fileCallPath+"'>";
+		             str += "</div>";
+		             str +"</li>";
+	             
+	           }else{  
+	               str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"' ><div>";
+	               str += "<span> "+ attach.fileName+"</span><br/>";
+	               str += "<img src='/resources/img/attach.png'></a>";
+	               str += "</div>";
+	               str +"</li>";
+	           }
+	         });
+	         
+	         $(".uploadResult ul").html(str);
 	 });
 	})();
 	 
 	 
 	 
+	 //첨부파일 클릭 시 이벤트 처리
 	 
+  $(".uploadResult").on("click","li", function(e){
+      
+	    console.log("view image");
+	    
+	    var liObj = $(this);
+	    
+	    var path = encodeURIComponent(liObj.data("path")+"/" + liObj.data("uuid")+"_" + liObj.data("filename"));
+	    
+	    if(liObj.data("type")){
+	      showImage(path.replace(new RegExp(/\\/g),"/"));
+	    }else {
+	      //download 
+	      self.location ="/uploadSample/download?fileName="+path
+	    }
+  });
+	 
+	 
+	 //원본 이미지 보여주기
+	  function showImage(fileCallPath){
+		    
+	    alert(fileCallPath);
+	    
+	    $(".bigPictureWrapper").css("display","flex").show();
+	    
+	    $(".bigPicture")
+	    .html("<img src='/uploadSample/display?fileName="+fileCallPath+"' >")
+	    .animate({width:'100%', height: '100%'}, 1000);
+		    
+	  }
+	 
+	 
+	 //원본 이미지 창 닫기
+	  $(".bigPictureWrapper").on("click", function(e){
+		    $(".bigPicture").animate({width:'0%', height: '0%'}, 1000);
+		    setTimeout(function(){
+		      $('.bigPictureWrapper').hide();
+		    }, 1000);
+		  });
 	
 	
 	});
