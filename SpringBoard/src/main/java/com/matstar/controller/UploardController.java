@@ -1,6 +1,6 @@
 package com.matstar.controller;
 
-import java.io.Console;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,6 +70,8 @@ public class UploardController {
 		}
 		
 	}	
+
+
 	
 	//Ajax를 이용하는 파일 업로드
 	@GetMapping("/uploadAjax")
@@ -81,27 +82,44 @@ public class UploardController {
 	
 	
 	
-	//년/월일/ 폴더를 만들기 위한 문자열 생성 메서드
+//---------------------------------------------------------------------------------------------------------------	
+	
+	
+	
+	
+	
+	//  년/월/일/ 폴더를 만들기 위한 문자열 생성 메서드
 	private String getFolder() {
+		
+		log.info("getFolder 메서드 실행");
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
 		Date date = new Date();
 		
 		String str = sdf.format(date);
 		
-		// sdf의 "-" 문자를 파일 경로 구분자로 바꿔준다.
+		// sdf의 "-" 문자를 파일 경로 구분자(File.separator)로 바꿔준다.
 		//(윈도우 : \\, 리눅스 : /)
 		return str.replace("-",File.separator);
+		
+		
 	}
 	
 	
-	//섬네일 이미지를 만들기 위해 이미지 파일을 체크하는 메서드
+	
+	//  섬네일 이미지를 만들기 위해 이미지 파일을 체크하는 메서드
 	private boolean checkImageType(File file) {
 		try {
+			
+			log.info("checkImageType 메서드 실행");
+			
 			//probeContentType 파일의 컨텐츠 유형을 (MIME타입) 검사하는 메서드
 			//file.toPath() 파일경로를포함한 전체 파일이름을 반환
 			String contentType = Files.probeContentType(file.toPath());
-			log.info("파일타입 확인 :" + contentType);
+			
+			log.info("checkImageType() -> 파일타입 확인 :" + contentType);
+			
 			return contentType.startsWith("image");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,12 +128,13 @@ public class UploardController {
 	}
 	
 	
-	//AttachFileDTO를 만들어 값을 전달해 JSON 데이터를 반환하도록 한다.
+	
+
 	@PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile) {
 		
-		log.info("update ajax Post......");
+		log.info("--uploadAjaxAction 실행, 폴더 생성 및 파일 업로드 --");
 		
 		List<AttachFileDTO> list = new ArrayList<>();
 		
@@ -124,10 +143,11 @@ public class UploardController {
 		String uploadFolderPath = getFolder();
 		
 		//년/월/일 폴더 생성
+								// c:\\upload , getFolder()
 		File uploadPath =new File(uploadFolder,uploadFolderPath);
 		
-		log.info("uploadFolderPath : " + uploadFolderPath);
-		log.info("uploadPath : " + uploadPath);
+		log.info("uploadAjaxAction uploadFolderPath : " + uploadFolderPath);
+		log.info("uploadAjaxAction uploadPath : " + uploadPath);
 		
 		if(uploadPath.exists() == false) {
 			//uploadPath가 존재하지 않으면 폴더 생성
@@ -136,9 +156,9 @@ public class UploardController {
 
 		
 		for(MultipartFile multipartFile : uploadFile) {
-			log.info("----------------------------");
 			
 			
+			log.info("mulfipartFile 전송 ");
 			log.info("Upload File Name : " + multipartFile.getOriginalFilename());
 			log.info("Upload File Size : " + multipartFile.getSize());
 			
@@ -172,6 +192,7 @@ public class UploardController {
 				
 				attachFileDTO.setUuid(uuid.toString());
 				attachFileDTO.setUploadPath(uploadFolderPath);
+				
 				
 				//이미지 파일 체크
 				if(checkImageType(saveFile)) {
@@ -268,11 +289,12 @@ public class UploardController {
 	@ResponseBody
 	public ResponseEntity<byte[]> getfile(String fileName) {
 		
-		log.info("fileName : " + fileName);
+		log.info("--display 실행--");
+		log.info("받은 파라미터 확인 fileName : " + fileName);
 		
 		File file = new File("c:\\upload\\"+fileName);
 		
-		log.info("file :"+file);
+		log.info("업로드 경로를 붙인 전체 파일 이름 :"+file);
 		
 		ResponseEntity<byte[]> result = null;
 		
@@ -302,9 +324,10 @@ public class UploardController {
 	//User-Agent : Http의 헤더 메시지 중에서 디바이스의 정보를 알 수있는 UserAgent를 이용해 파라미터로 수집한다.
 	public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent") String userAgent,  String fileName){
 		
-		log.info("download file : " + fileName);
+		log.info("--download 실행--");
+		log.info("파라미터 파일 이름 확인: " + fileName);
 		Resource resource = new FileSystemResource("c:\\upload\\"+fileName);
-		log.info("resource : " + resource);
+		log.info("전체 경로가 붙은 파일이름 : " + resource);
 		
 		if(resource.exists() == false) {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
@@ -312,11 +335,11 @@ public class UploardController {
 		
 		
 		String resourceName = resource.getFilename();
-		log.info("resourceName : " + resourceName);
+		log.info("Resource로부터 파일 이름 확인: " + resourceName);
 		
 		//uuid를 제거한 원래의 파일 이름
 		String resourceOriginalName = resourceName.substring(resourceName.indexOf("_")+1);
-		log.info("resourceOriginalName : "+ resourceOriginalName);
+		log.info("uuid를 제거한 원래의 파일 이름 : "+ resourceOriginalName);
 		
 		
 		HttpHeaders headers = new HttpHeaders();
@@ -371,7 +394,8 @@ public class UploardController {
 	@ResponseBody
 	public ResponseEntity<String> deleteFile(String fileName, String type){
 		
-		log.info("deleteFile " + fileName);
+		log.info("--delete확인--");
+		log.info("파라미터 파일 이름 확인" + fileName);
 		
 		File file;
 		
@@ -382,10 +406,11 @@ public class UploardController {
 			
 			if(type.equals("image")) {
 				
+				log.info("삭제하려는 파일은 이미지 파일입니다.");
 				String largeFileName = file.getAbsolutePath().replace("s_", "");
 				
-				log.info("largeFileName : " + largeFileName);
-				log.info("path" + file.getAbsolutePath());
+				log.info("원본 이미지 파일의 이름 확인 : " + largeFileName);
+				log.info("원본 이미지 파일의 경로" + file.getAbsolutePath());
 				file = new File(largeFileName);
 				
 				file.delete();

@@ -130,7 +130,8 @@
 			var inputFile = $("input[name='uploadFile']");
 			var files = inputFile[0].files;
 			
-			console.log("files : " + files);
+			
+			console.log("files files: " + files);
 
 			
 			//add File Data to formData

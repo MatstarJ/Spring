@@ -21,7 +21,7 @@ public class Criteria {
 	private String keyword;
 	
 	
-	// 1페이지당 10개를 기본 값으로 정
+	// 1페이지당 10개를 기본 값으로 정한다.
 	public Criteria() {
 		this(1,10);
 	}

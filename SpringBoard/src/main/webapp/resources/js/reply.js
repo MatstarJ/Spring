@@ -126,7 +126,7 @@ var replyService = (function() {
             var mi = dateObj.getMinutes();
             var ss = dateObj.getSeconds();
 
-            // 숫자가 10보다 작으면 앞에 0을 붙여서 출력
+            // 등록시간이 9시가 넘으면 그대로 출력하고 아니면 앞에 0을 붙임
             return [ (hh > 9 ? '' : '0' ) + hh, ':' , (mi > 9 ? '' : '0') + mi, ':', (ss > 9 ? '' : '0') + ss].join('');
         } else {
             
