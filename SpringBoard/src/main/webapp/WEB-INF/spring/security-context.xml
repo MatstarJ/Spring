@@ -7,9 +7,13 @@
 
 
 	<bean id="customAccessDenied" class="com.matstar.security.CustomAccessDeniedHandler"></bean>
-	<bean id="customLoginSuccess" class="com.matstar.security.CustomLoginSuccessHandler"></bean>	
+	
+	<!-- <bean id="customLoginSuccess" class="com.matstar.security.CustomLoginSuccessHandler"></bean>	 -->
+	
 	<!-- <bean id="customPasswordEncoder" class="com.matstar.security.CustomNoOpPasswordEncoder"></bean> -->
+	
 	<bean id ="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	
 	<bean id="customUserDetailsService" class="com.matstar.security.CustomUserDetailsService"></bean>
 	
 	<!-- HikariCP configuration -->
@@ -32,11 +36,11 @@
 		<!-- 접근 제한 설정 -->
 	<security:http>
 		
-		<security:intercept-url pattern="/securitySample/all" access="permitAll" />
+		<security:intercept-url pattern="/security/all" access="permitAll" />
 		
-		<security:intercept-url pattern="/securitySample/member" access="hasRole('ROLE_MEMBER')"/>
+		<security:intercept-url pattern="/security/member" access="hasRole('ROLE_MEMBER')"/>
 		
-		<security:intercept-url pattern="/securitySample/admin" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/security/admin" access="hasRole('ROLE_ADMIN')"/>
 		
 		<!-- <security:access-denied-handler error-page="securitySample/accessError"/> -->
 		
@@ -44,18 +48,25 @@
 		
 		<!--커스텀 로그인 페이지 설정,  login-page 속성은 반드시 GET 방식으로 접근하는 URI를 지정한다. -->
 		<!-- authentication-success-handler 속성 : 로그인 성공 후의 처리를 담당 -->
-		<security:form-login login-page="/securitySample/customLogin" authentication-success-handler-ref="customLoginSuccess" />
+		<!-- <security:form-login login-page="/security/customLogin" authentication-success-handler-ref="customLoginSuccess" /> -->
+		
+		<security:form-login login-page="/security/customLogin" />
 		
 		
 		<!--  기본 로그인 페이지 -->
 		<!-- <security:form-login/> -->
 		
 	
-		<security:logout logout-url="/securitySample/customLogout" invalidate-session="true"/>
+		<security:logout logout-url="/security/customLogout" invalidate-session="true" delete-cookies="remember-me,JESSION_ID"/>
 	
 	
 		<!-- <security:csrf disabled="true"/> -->
 	
+	
+		<!-- 자동 로그인 -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800" />
+		
+		
 	</security:http>
 
 
@@ -63,13 +74,14 @@
 	
 	
 	<security:authentication-manager>
-		<security:authentication-provider
-		user-service-ref ="customUserDetailsService">
+		<!--   UserDetailsService를 구현한 customUserDetailsService를 사용하여 mapper를 주입받아 기능을 구현한다. -->
+		<security:authentication-provider user-service-ref ="customUserDetailsService">
 			
 			<!-- <security:jdbc-user-service data-source-ref="dataSource"/> -->
 			
 			<!-- <security:password-encoder ref="customPasswordEncoder"/> -->
 			
+			<!--  지정된 방식의 테이블을 사용하지 않고 임의로 만든 테이블을 사용할 경우 다음 쿼리를 통해 처리한다. -->
 <!-- 			<security:jdbc-user-service data-source-ref="dataSource" 
 			users-by-username-query="select userid, userpw, enabled from tbl_member where userid = ? " 
 			authorities-by-username-query="select userid, auth from tbl_member_auth where userid = ? "/>  -->

@@ -14,8 +14,12 @@
 
 <sec:authorize access="isAnonymous()">
 	
-	<a href="/securitySample/customLogin">커스텀 로그인</a>
+	<a href="/securitySample/customLogin">로그인</a>
 
+</sec:authorize>
+
+<sec:authorize access="isAuthenticated()">
+	<a href="/securitySample/customLogout">로그아웃</a>
 </sec:authorize>
 
 </body>

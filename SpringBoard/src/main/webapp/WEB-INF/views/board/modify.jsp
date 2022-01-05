@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri ="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@include file="../include/header.jsp" %>
 
 	<style>
@@ -298,6 +299,9 @@
 		
 		//첨부파일 변화를 감지해서 자동으로 업로드 처리 시킨다.
 		
+		var csrfHeaderName = "${_csrf.headerName}";
+		var csrfTokenValue = "${_csrf.token}";
+		
 		$("input[type='file']").change(function(e){
 			
 			var formData = new FormData();
@@ -319,6 +323,7 @@
 				//processData가 false로 되어 있으면 키와 값의 쌍으로 설정하지 않는다.
 				processData : false,
 				contentType : false,
+				beforeSend : function(xhr) { xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);},
 				data : formData,
 				type : "POST",
 				dataType : "json",
