@@ -559,7 +559,7 @@
 		 
 		 var originalReplyer = modalInputReplyer.val();
 		 
-		 console.log("Original Replyer" + originalReplyer);  // 댓글의 원래 작성자
+		 console.log("Original Replyer : " + originalReplyer);  // 댓글의 원래 작성자
 		 
 		 if(replyer != originalReplyer) {
 			 
@@ -568,7 +568,7 @@
 			 return;
 		 }
 		 
-		 replyService. remove(rno, originalReplyer, function(result) {
+		 replyService.remove(rno, originalReplyer, function(result) {
 			
 			 alert(result);
 			 modal.modal("hide");
@@ -577,6 +577,9 @@
 		 });
 		 
 	 });
+	 
+	 
+	 
 	 
 	 
 	 //게시물의 첨부파일을 가져오는 부분이 자동으로 동작하게 즉시실행 함수로 만듬

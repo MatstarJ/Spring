@@ -47,10 +47,13 @@ var replyService = (function() {
 
     // 댓글 삭제
     function remove(rno, replyer, callback, error) {
+    
+   		 console.log("Stringify : " + JSON.stringify({rno:rno, replyer:replyer})); 
+    
         $.ajax({
             type : "delete",
             url : "/replies/" + rno,
-            data : JSON.stringify({rno:rno, replyer:replyer}),
+            data :  JSON.stringify({rno:rno, replyer:replyer}),
             contentType : "application/json; charset=utf-8",
             success : function(deleteResult, status, xhr) {
                 if(callback) {

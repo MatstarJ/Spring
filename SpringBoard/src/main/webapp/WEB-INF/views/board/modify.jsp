@@ -97,7 +97,7 @@
                            		
                        		<div class="form-group">
                        			<label>Writer</label>
-                       			<input class="form-control" name="writer" value="${board.writer}">
+                       			<input class="form-control" name="writer" value="${board.writer}" readonly>
                        		</div>           
                        		
                        		<div class="form-group">
@@ -105,12 +105,23 @@
                        			<input class="form-control" name="updateDate" value="<fmt:formatDate pattern='yyyy/MM/dd' value='${board.updateDate}'/>" readonly>
                        		</div>                	
                            	
+                  	
                            	
-                           	<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
-                           	<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+							<sec:authentication property="principal" var="pinfo"/>
+							
+							<sec:authorize access="isAuthenticated()">
+							
+							<c:if test="${pinfo.username eq board.writer}">
+							
+							  <button type="submit" data-oper='modify' class="btn btn-default">Modify</button>
+							  <button type="submit" data-oper='remove' class="btn btn-danger">Remove</button>
+							</c:if>
+							</sec:authorize>
+                           	
                            	<button type="submit" data-oper="list" class="btn btn-info">List</button>
                            	 
 								
+							 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 							<!-- get(조회)페이지로부터 넘겨 받은 값 -->	
 							<input type="hidden" name="pageNum" value="${cri.pageNum}">
 							<input type="hidden" name="amount" value="${cri.amount}">
@@ -186,7 +197,7 @@
 				var pageNumTag = $("input[name='pageNum']").clone();	
 				var amountTag = $("input[name='pageNum']").clone();	
 				var keywordTag = $("input[name='keyword']").clone();
-				var typeTag = $("input[name'type']").clone();
+				var typeTag = $("input[name='type']").clone();
 			
 				formObj.empty();
 				formObj.append(pageNumTag);

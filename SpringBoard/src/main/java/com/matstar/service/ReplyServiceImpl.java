@@ -44,7 +44,7 @@ public class ReplyServiceImpl implements ReplyService {
 		
 		log.info("remove....." + rno);
 		
-		//글번호를 받
+		//댓글번호를 받아서 댓글을 조회한다.
 		ReplyVO vo = mapper.read(rno);
 		boardMapper.updateReplyCnt(vo.getBno(), -1);
 		

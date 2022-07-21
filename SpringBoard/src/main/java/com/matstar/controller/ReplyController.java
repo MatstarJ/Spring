@@ -94,7 +94,7 @@ public class ReplyController {
 	
 	//댓글 삭제
 	@PreAuthorize("principal.username == #vo.replyer")
-	@DeleteMapping(value ="/{rno}")
+	@DeleteMapping("/{rno}")
 	public ResponseEntity<String> remove(@RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
 		
 		log.info("remove : " + rno);
@@ -106,7 +106,8 @@ public class ReplyController {
 	
 	//댓글 수정
 	@PreAuthorize("principal.username == #vo.replyer")
-	@RequestMapping(method= {RequestMethod.PUT, RequestMethod.PATCH}, value = "/{rno}", consumes = "application/json",  produces = {MediaType.TEXT_PLAIN_VALUE})
+	@RequestMapping(method = { RequestMethod.PUT,
+			RequestMethod.PATCH }, value = "/{rno}", consumes = "application/json")
 	public ResponseEntity<String> modify(@RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
 		
 		vo.setRno(rno);
