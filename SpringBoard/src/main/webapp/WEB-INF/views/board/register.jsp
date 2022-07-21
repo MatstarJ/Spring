@@ -76,14 +76,14 @@
                            	
                            	<div class="form-group">
                            		<label>Title</label>
-                           		<input class="form-control" name="title">                           	
+                           		<input class="form-control" id="title" name="title">                           	
                            	</div>
                            	
                            	
 
                       		<div class="form-group">
                       			<label>Text area</label>
-                      			<textarea class="form-control" rows="3" name="content"></textarea>
+                      			<textarea class="form-control" id="content" rows="3" name="content"></textarea>
                       		</div>
                            		
                            		
@@ -146,6 +146,13 @@
 		$("button[type='submit']").on("click",function(e){
 			e.preventDefault();
 			console.log("submit clicked");
+			
+			if( $.trim($("#title").val()) == '' || $.trim($("#content").val()) == '' ) {
+				e.preventDefault();
+				alert("제목 또는 글 내용이 없습니다.");
+				return false;
+			}
+			
 			
 			var str = "";
 			
